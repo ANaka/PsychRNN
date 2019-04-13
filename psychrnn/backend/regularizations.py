@@ -17,6 +17,7 @@ class Regularizer(object):
         self.L2_rec = params.get('L2_rec', 0)
         self.L2_out = params.get('L2_out', 0)
 
+        self.L1_firing_rate = params.get('L1_firing_rate', 0)
         self.L2_firing_rate = params.get('L2_firing_rate', 0)
         self.sussillo_constant = params.get('sussillo_constant', 0)
 
@@ -32,6 +33,11 @@ class Regularizer(object):
         # L2 weight regularization
         # ----------------------------------
         reg += self.L2_weight_reg(model)
+
+        # ----------------------------------
+        # L1 firing rate regularization
+        # ----------------------------------
+        reg += self.L1_firing_rate_reg(model)
 
         # ----------------------------------
         # L2 firing rate regularization
@@ -78,6 +84,13 @@ class Regularizer(object):
         reg = self.L2_firing_rate * tf.reduce_mean(tf.square(tf.nn.relu(model.states)))
 
         return reg
+
+    def L1_firing_rate_reg(self, model):
+
+        reg = self.L1_firing_rate * tf.reduce_mean(tf.abs(tf.nn.relu(model.states)))
+
+        return reg
+
 
     def sussillo_reg(self, model):
         states = tf.unstack(tf.transpose(model.states, [1, 0, 2]))
