@@ -65,3 +65,30 @@ class Task(object):
 
             yield np.array(x_data), np.array(y_data), np.array(mask)
 
+
+    def batch_generator_with_params(self):
+        batch = 1
+        while batch > 0:
+
+            x_data = []
+            y_data = []
+            mask = []
+            params = []
+            # ----------------------------------
+            # Loop over trials in batch
+            # ----------------------------------
+            for trial in range(self.N_batch):
+                # ---------------------------------------
+                # Generate each trial based on its params
+                # ---------------------------------------
+                p = self.generate_trial_params(batch, trial)
+                x,y,m = self.generate_trial(p)
+                x_data.append(x)
+                y_data.append(y)
+                mask.append(m)
+                params.append(p)
+
+            batch += 1
+
+            yield np.array(x_data), np.array(y_data), np.array(mask), params
+
